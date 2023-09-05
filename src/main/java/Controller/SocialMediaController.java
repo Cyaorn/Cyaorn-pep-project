@@ -16,18 +16,58 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
 
+        app.post("register", SocialMediaController::registerHandler);
+        app.post("login", SocialMediaController::loginHandler);
+        app.post("messages", SocialMediaController::messageHandler);
+        app.get("messages", SocialMediaController::getAllHandler);
+        app.get("messages/{message_id}", SocialMediaController::getMessageHandler);
+        app.delete("messages/{message_id}", SocialMediaController::deleteHandler);
+        app.patch("message/{message_id}", SocialMediaController::patchHandler);
+        app.get("accounts/{account_id}/messages", SocialMediaController::getAllFromUserHandler);
+        
         return app;
     }
 
     /**
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
-     */
+     */ /*
     private void exampleHandler(Context context) {
         context.json("sample text");
     }
+    */ 
 
+    private static void registerHandler(Context ctx) {
+
+    }
+
+    private static void loginHandler(Context ctx) {
+
+    }
+
+    private static void messageHandler(Context ctx) {
+
+    }
+
+    private static void getAllHandler(Context ctx) {
+
+    }
+
+    private static void getMessageHandler(Context ctx) {
+
+    }
+
+    private static void deleteHandler(Context ctx) {
+        
+    }
+
+    private static void patchHandler(Context ctx) {
+        
+    }
+
+    private static void getAllFromUserHandler(Context ctx) {
+
+    }
 
 }

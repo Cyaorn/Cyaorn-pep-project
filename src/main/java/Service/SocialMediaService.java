@@ -2,6 +2,7 @@ package Service;
 
 import DAO.SocialMediaDAO;
 import Model.*;
+import java.util.List;
 
 public class SocialMediaService {
 
@@ -15,6 +16,10 @@ public class SocialMediaService {
         } 
     }
 
+    public List<Account> getAllUsers() {
+        return smDAO.getAllUsers();
+    }
+
     public Account registerUser(Account newUser) {
         // if username already exists, return null Account since registration failed
         if (smDAO.getAccountByUser(newUser.getUsername()) != null) {
@@ -25,6 +30,10 @@ public class SocialMediaService {
         String newUsername = smDAO.registerUser(newUser);
         Account savedUser = smDAO.getAccountByUser(newUsername);
         return savedUser;
+    }
+
+    public Account loginUser(Account user) {
+        return smDAO.getAccountByUserPass(user);
     }
     
 }

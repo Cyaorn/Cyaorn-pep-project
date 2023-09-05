@@ -7,6 +7,7 @@ import Service.SocialMediaService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import Model.*;
+import java.util.List;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -29,6 +30,9 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
 
+        // not required but for testing purposes
+        app.get("users", SocialMediaController::getAllUsersHandler);
+        
         app.post("register", SocialMediaController::registerHandler);
         app.post("login", SocialMediaController::loginHandler);
         app.post("messages", SocialMediaController::messageHandler);
@@ -50,11 +54,16 @@ public class SocialMediaController {
     }
     */ 
 
+    private static void getAllUsersHandler(Context ctx) {
+        List<Account> users = smService.getAllUsers();
+        ctx.json(users);
+        ctx.status(200);
+    }
+
     private static void registerHandler(Context ctx) {
         String requestBody = ctx.body();
         ObjectMapper om = new ObjectMapper();
         try {
-            // ***still need to verify if username is valid first***
             Account newUser = om.readValue(requestBody, Account.class);
             if (newUser.getUsername().length() == 0 || 
                 newUser.getPassword().length() < 4) {
@@ -63,17 +72,29 @@ public class SocialMediaController {
                 return;
             }
             Account savedUser = smService.registerUser(newUser);
-            if (savedUser == null) {
-                ctx.status(400);
-            }
             ctx.json(savedUser);
+            ctx.status(200);
         } catch (JsonProcessingException | NullPointerException e) {
             ctx.status(400);
         }
     }
 
     private static void loginHandler(Context ctx) {
-
+        String requestBody = ctx.body();
+        ObjectMapper om = new ObjectMapper();
+        try {
+            Account user = om.readValue(requestBody, Account.class);
+            Account foundUser = smService.loginUser(user);
+            if (foundUser == null) {
+                System.out.println("Login information not found in database!");
+                ctx.status(400);
+            } else {
+                ctx.json(foundUser);
+                ctx.status(200);
+            }
+        } catch (JsonProcessingException e) {
+            ctx.status(400);
+        }
     }
 
     private static void messageHandler(Context ctx) {

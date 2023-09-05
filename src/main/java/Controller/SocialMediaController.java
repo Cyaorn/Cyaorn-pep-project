@@ -1,8 +1,12 @@
 package Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import Service.SocialMediaService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import Model.*;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -11,10 +15,10 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
 
-    SocialMediaService smservice;
+    static SocialMediaService smService;
 
     public SocialMediaController() {
-        this.smservice = new SocialMediaService();
+        this.smService = new SocialMediaService();
     }
     
     /**
@@ -47,7 +51,25 @@ public class SocialMediaController {
     */ 
 
     private static void registerHandler(Context ctx) {
-
+        String requestBody = ctx.body();
+        ObjectMapper om = new ObjectMapper();
+        try {
+            // ***still need to verify if username is valid first***
+            Account newUser = om.readValue(requestBody, Account.class);
+            if (newUser.getUsername().length() == 0 || 
+                newUser.getPassword().length() < 4) {
+                ctx.status(400);
+                System.out.println("Account parameters invalid!");
+                return;
+            }
+            Account savedUser = smService.registerUser(newUser);
+            if (savedUser == null) {
+                ctx.status(400);
+            }
+            ctx.json(savedUser);
+        } catch (JsonProcessingException | NullPointerException e) {
+            ctx.status(400);
+        }
     }
 
     private static void loginHandler(Context ctx) {

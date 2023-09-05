@@ -87,13 +87,13 @@ public class SocialMediaController {
             Account foundUser = smService.loginUser(user);
             if (foundUser == null) {
                 System.out.println("Login information not found in database!");
-                ctx.status(400);
+                ctx.status(401);
             } else {
                 ctx.json(foundUser);
                 ctx.status(200);
             }
         } catch (JsonProcessingException e) {
-            ctx.status(400);
+            ctx.status(401);
         }
     }
 

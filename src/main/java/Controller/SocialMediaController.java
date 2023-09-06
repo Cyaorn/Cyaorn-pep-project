@@ -39,7 +39,7 @@ public class SocialMediaController {
         app.get("messages", SocialMediaController::getAllMsgsHandler);
         app.get("messages/{message_id}", SocialMediaController::getMessageHandler);
         app.delete("messages/{message_id}", SocialMediaController::deleteHandler);
-        app.patch("message/{message_id}", SocialMediaController::patchHandler);
+        app.patch("messages/{message_id}", SocialMediaController::patchHandler);
         app.get("accounts/{account_id}/messages", SocialMediaController::getAllFromUserHandler);
 
         return app;

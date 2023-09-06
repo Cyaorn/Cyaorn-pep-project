@@ -50,4 +50,11 @@ public class SocialMediaService {
         return smDAO.getMessageByID(id);
     }
 
+    // want to return the message that was deleted
+    public Message deleteMessage(int id) {
+        Message oldMsg = smDAO.getMessageByID(id);
+        smDAO.deleteMessage(id);
+        return oldMsg;
+    }
+
 }

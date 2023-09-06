@@ -132,7 +132,12 @@ public class SocialMediaController {
     }
 
     private static void deleteHandler(Context ctx) {
-        
+        String msgID = ctx.pathParam("message_id");
+        Message msg = smService.deleteMessage(Integer.parseInt(msgID));
+        if (!(msg == null)) {
+            ctx.json(msg);
+        }
+        ctx.status(200);
     }
 
     private static void patchHandler(Context ctx) {

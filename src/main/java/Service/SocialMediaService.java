@@ -46,4 +46,8 @@ public class SocialMediaService {
         return smDAO.getAllMsgs();
     }
 
+    public Message getMessageByID(int id) {
+        return smDAO.getMessageByID(id);
+    }
+
 }

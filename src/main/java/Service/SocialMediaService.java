@@ -57,4 +57,12 @@ public class SocialMediaService {
         return oldMsg;
     }
 
+    public Message updateMessage(int id, Message newMsg) {
+        int newID = smDAO.updateMessage(id, newMsg); // will always just be the same ID but whatever
+        return smDAO.getMessageByID(newID);
+    }
+
+    public List<Message> getAllMsgsFromUser(int id) {
+        return smDAO.getAllMsgsFromUser(id);
+    }
 }

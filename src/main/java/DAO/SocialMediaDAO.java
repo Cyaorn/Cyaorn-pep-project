@@ -188,4 +188,40 @@ public class SocialMediaDAO {
         }
     }
 
+    public int updateMessage(int id, Message newMsg) {
+        try {
+            String sql = "update message set message_text = ? where message_id = ?;";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, newMsg.getMessage_text());
+            ps.setInt(2, id);
+            ps.executeUpdate();
+            return id; 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public List<Message> getAllMsgsFromUser(int account_id) {
+        ArrayList<Message> msgs = new ArrayList<>();
+        try {
+            String sql = "select * from message where posted_by = ?;";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, account_id);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                msgs.add(new Message(
+                    rs.getInt("message_id"),
+                    rs.getInt("posted_by"),
+                    rs.getString("message_text"),
+                    rs.getLong("time_posted_epoch")
+                ));
+            }
+            return msgs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return msgs;
+    }
+
 }

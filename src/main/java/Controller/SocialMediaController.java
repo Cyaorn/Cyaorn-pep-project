@@ -141,11 +141,33 @@ public class SocialMediaController {
     }
 
     private static void patchHandler(Context ctx) {
-        
+        String msgID = ctx.pathParam("message_id");
+        String requestBody = ctx.body();
+        ObjectMapper om = new ObjectMapper();
+        try {
+            Message newMessage = om.readValue(requestBody, Message.class);
+            if (newMessage.getMessage_text().length() == 0 || 
+                newMessage.getMessage_text().length() >= 255) {
+                ctx.status(400);
+                System.out.println("Message edit is an invalid size!");
+                return;
+            }
+            Message savedMessage = smService.updateMessage(
+                Integer.parseInt(msgID), 
+                newMessage
+            );
+            ctx.json(savedMessage);
+            ctx.status(200);
+        } catch (JsonProcessingException | NullPointerException e) {
+            ctx.status(400);
+        }
     }
 
     private static void getAllFromUserHandler(Context ctx) {
-
+        int account_id = Integer.parseInt(ctx.pathParam("account_id"));
+        List<Message> msgs = smService.getAllMsgsFromUser(account_id);
+        ctx.json(msgs);
+        ctx.status(200);
     }
 
 }

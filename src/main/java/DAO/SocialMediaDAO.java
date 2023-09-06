@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+
 import Model.*;
 import Util.ConnectionUtil;
 import java.util.List;
@@ -109,6 +111,67 @@ public class SocialMediaDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int sendMessage(Message newMsg) {
+        try {
+            String sql = "insert into message (posted_by, message_text, time_posted_epoch) values (?, ?, ?);";
+            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, newMsg.getPosted_by());
+            ps.setString(2, newMsg.getMessage_text());
+            ps.setLong(3, newMsg.getTime_posted_epoch());
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt("message_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public Message getMessageByID(int id) {
+        try {
+            PreparedStatement ps = conn.prepareStatement("select * from message where message_id = ?;");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return (new Message(
+                    rs.getInt("message_id"),
+                    rs.getInt("posted_by"),
+                    rs.getString("message_text"),
+                    rs.getLong("time_posted_epoch")
+                ));
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Message> getAllMsgs() {
+        ArrayList<Message> msgs = new ArrayList<>();
+        try {
+            String sql = "select * from message;";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                msgs.add(new Message(
+                    rs.getInt("message_id"),
+                    rs.getInt("posted_by"),
+                    rs.getString("message_text"),
+                    rs.getLong("time_posted_epoch")
+                ));
+            }
+            return msgs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return msgs;
     }
 
 }

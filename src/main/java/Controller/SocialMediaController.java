@@ -36,7 +36,7 @@ public class SocialMediaController {
         app.post("register", SocialMediaController::registerHandler);
         app.post("login", SocialMediaController::loginHandler);
         app.post("messages", SocialMediaController::messageHandler);
-        app.get("messages", SocialMediaController::getAllHandler);
+        app.get("messages", SocialMediaController::getAllMsgsHandler);
         app.get("messages/{message_id}", SocialMediaController::getMessageHandler);
         app.delete("messages/{message_id}", SocialMediaController::deleteHandler);
         app.patch("message/{message_id}", SocialMediaController::patchHandler);
@@ -98,11 +98,28 @@ public class SocialMediaController {
     }
 
     private static void messageHandler(Context ctx) {
-
+        String requestBody = ctx.body();
+        ObjectMapper om = new ObjectMapper();
+        try {
+            Message newMessage = om.readValue(requestBody, Message.class);
+            if (newMessage.getMessage_text().length() == 0 || 
+                newMessage.getMessage_text().length() >= 255) {
+                ctx.status(400);
+                System.out.println("Message is an invalid size!");
+                return;
+            }
+            Message savedMessage = smService.sendMessage(newMessage);
+            ctx.json(savedMessage);
+            ctx.status(200);
+        } catch (JsonProcessingException | NullPointerException e) {
+            ctx.status(400);
+        }
     }
 
-    private static void getAllHandler(Context ctx) {
-
+    private static void getAllMsgsHandler(Context ctx) {
+        List<Message> msgs = smService.getAllMsgs();
+        ctx.json(msgs);
+        ctx.status(200);
     }
 
     private static void getMessageHandler(Context ctx) {

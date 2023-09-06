@@ -36,4 +36,14 @@ public class SocialMediaService {
         return smDAO.getAccountByUserPass(user);
     }
     
+    public Message sendMessage(Message newMsg) {
+        int newID = smDAO.sendMessage(newMsg);
+        Message savedMsg = smDAO.getMessageByID(newID);
+        return savedMsg;
+    }
+
+    public List<Message> getAllMsgs() {
+        return smDAO.getAllMsgs();
+    }
+
 }
